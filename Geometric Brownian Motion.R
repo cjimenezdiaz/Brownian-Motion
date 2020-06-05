@@ -2,6 +2,7 @@
 library(tidyquant)
 library(lubridate)
 library(TTR)
+library(dplyr)
 
 # Download Prices
 DDBB <- "SPY" %>%
@@ -9,12 +10,14 @@ DDBB <- "SPY" %>%
            from = Sys.Date() - years(100),
            to   = Sys.Date()) %>%
     mutate(return = ROC(adjusted, n = 1)) %>%
-    na.omit()
+    na.omit() 
 
-DDBB_Filter <- DDBB
+# Apply a filter
+DDBB_Filter <- DDBB %>%
+    filter(date > "2008-01-01" & date < "2009-03-01")
 
 # Create Geometric Brownian Motion
-set.seed(123)
+set.seed(round(runif(1, min = 0, max = 1000)))
 
 nsim  <- 50
 S0    <- last(DDBB$adjusted)
